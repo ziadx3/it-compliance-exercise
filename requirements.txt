@@ -1,0 +1,18 @@
+# UI
+streamlit>=1.35
+
+# Environment variables (.env)
+python-dotenv>=1.0
+
+# LangChain agent stack (0.3.x provides langchain.agents.create_openai_tools_agent)
+langchain>=0.3,<0.4
+langchain-core>=0.3,<0.4
+langchain-community>=0.3,<0.4
+langchain-openai>=0.3,<0.4
+
+# OpenRouter client (used for reranking) and embeddings tokenizer
+openai>=1.40
+tiktoken>=0.7
+
+# Vector store
+chromadb>=0.5
