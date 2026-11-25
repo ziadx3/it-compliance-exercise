@@ -1,0 +1,118 @@
+# promptfooconfig.yaml
+description: "ARIS IT Compliance Agent - Comprehensive Evaluation Suite (Combined Contains & Rubric)"
+
+prompts:
+  - "{{query}}"
+
+providers:
+  - id: python:C:/Users/Jk/Desktop/aris-exersice/promptfoo_provider.py
+    label: "IT Compliance Agent (GPT-4o-mini + 50 SOPs)"
+
+defaultTest:
+  options:
+    provider:
+      id: openai:gpt-4o-mini
+      config:
+        apiKeyEnvar: OPENROUTER_API_KEY
+        apiBaseUrl: https://openrouter.ai/api/v1
+
+tests:
+  # ==========================================
+  # CATEGORY 1: Policy Inquiries & Expected Checks
+  # ==========================================
+  - description: "Inquiry 1 - Password Policy Expert Check"
+    vars:
+      query: "What are the rules for updating my company password?"
+    assert:
+      - type: contains
+        value: "SOP-IT-003"
+      - type: llm-rubric
+        value: "The agent must accurately state the password update requirements and cite the correct policy."
+
+  - description: "Inquiry 2 - Storage & Backup Citation"
+    vars:
+      query: "Where should I store company confidential documents?"
+    assert:
+      - type: contains
+        value: "SOP-IT-033"
+      - type: llm-rubric
+        value: "The agent must specify the approved company storage repositories and cite the correct policy source."
+
+  # ==========================================
+  # CATEGORY 2: Critical Incidents (Escalation Trigger)
+  # ==========================================
+  - description: "Incident 1 - Stolen Laptop"
+    vars:
+      query: "My work laptop was stolen from my car 30 minutes ago."
+    assert:
+      - type: contains
+        value: "propose_escalation_ticket"
+      - type: llm-rubric
+        value: "The agent must recognize the security emergency and trigger the escalation tool call."
+
+  - description: "Incident 2 - Phishing Click"
+    vars:
+      query: "I accidentally clicked a suspicious link in an email asking for my login credentials."
+    assert:
+      - type: contains
+        value: "propose_escalation_ticket"
+      - type: llm-rubric
+        value: "The agent must recognize the phishing incident as a critical emergency and trigger the escalation tool."
+
+  # ==========================================
+  # CATEGORY 3: Employee Exception Requests
+  # ==========================================
+  - description: "Exception 1 - Install Unapproved AI Tool"
+    vars:
+      query: "I need to install Cursor AI on my work laptop for development tasks."
+    assert:
+      - type: contains
+        value: "propose_escalation_ticket"
+      - type: llm-rubric
+        value: "The agent must treat unapproved software installation as an exception requiring governance review."
+
+  - description: "Exception 2 - Unapproved Cloud Storage"
+    vars:
+      query: "Can I upload departmental spreadsheets to my personal Google Drive for easy access?"
+    assert:
+      - type: contains
+        value: "SOP-IT-033"
+      - type: llm-rubric
+        value: "The agent must explain that personal cloud storage violates guidelines and cite the storage policy."
+
+  - description: "Exception 3 - Remote Access Sharing"
+    vars:
+      query: "Can my colleague log into my locked workstation using my credentials while I am in a meeting?"
+    assert:
+      - type: contains
+        value: "SOP-IT-043"
+      - type: llm-rubric
+        value: "The agent must reject credential sharing as a security violation and cite the corresponding policy."
+
+  # ==========================================
+  # CATEGORY 4: Edge Cases, Gaps & Multi-Intent
+  # ==========================================
+  - description: "Edge Case 1 - Working from Abroad"
+    vars:
+      query: "Can I work remotely from a coffee shop in Bali for two weeks using company VPN?"
+    assert:
+      - type: contains
+        value: "propose_escalation_ticket"
+      - type: llm-rubric
+        value: "The agent must recognize this as a policy gap requiring security review and trigger the escalation tool."
+
+  - description: "Edge Case 2 - Nonsense / Vague Input"
+    vars:
+      query: "Help me fix this fast please!!"
+    assert:
+      - type: llm-rubric
+        value: "The agent asks the user to clarify the technical problem politely without calling the escalation tool."
+
+  - description: "Multi-Intent Test - Combined Password, Storage & Security Query"
+    vars:
+      query: "What is the password update frequency required by the company, where am I officially allowed to store confidential documents, what is the policy for remote access sharing, and what is the rule for lost devices?"
+    assert:
+      - type: contains-all
+        value: ["SOP-IT-003", "SOP-IT-033", "SOP-IT-043", "SOP-IT-002"]
+      - type: llm-rubric
+        value: "The agent must successfully address all four intents, citing all four relevant policy sources accurately."
